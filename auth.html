@@ -63,7 +63,7 @@
     gap: 6px;
     padding: 16px 16px 0;
   }
-  .tab-btn, .provider-btn, .primary-btn, .link-btn {
+  .tab-btn, .primary-btn, .link-btn {
     font-family: 'Nunito', sans-serif;
     font-weight: 800;
     cursor: pointer;
@@ -115,14 +115,6 @@
     font-size: 1rem;
     margin-top: 4px;
   }
-  .provider-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
-  .provider-btn {
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: rgba(255,255,255,0.08);
-    color: var(--text);
-    padding: 11px;
-  }
   .auth-row {
     display: flex;
     justify-content: space-between;
@@ -150,7 +142,6 @@
   button[disabled], input[disabled] { opacity: 0.7; cursor: wait; }
   @media (max-width: 420px) {
     body { padding: 14px; }
-    .provider-grid { grid-template-columns: 1fr; }
     .auth-row { flex-direction: column; align-items: flex-start; }
   }
 </style>
@@ -177,10 +168,6 @@
         <input id="loginPassword" type="password" autocomplete="current-password" minlength="8" required/>
       </div>
       <button class="primary-btn" type="submit">Login</button>
-      <div class="provider-grid">
-        <button class="provider-btn" type="button" data-provider="google">Google</button>
-        <button class="provider-btn" type="button" data-provider="github">GitHub</button>
-      </div>
       <div class="auth-row">
         <span>Forgot your password?</span>
         <button class="link-btn" type="button" data-form-link="forgotForm">Reset it</button>
@@ -343,21 +330,6 @@ document.getElementById('resetForm').addEventListener('submit', async event => {
   if (error) return showMessage(error.message, 'error');
   showMessage('Password updated. Redirecting...', 'ok');
   setTimeout(() => window.location.replace(redirectTarget), 900);
-});
-
-document.querySelectorAll('[data-provider]').forEach(btn => {
-  btn.addEventListener('click', async () => {
-    if (isRateLimited(`auth-${btn.dataset.provider}-rate`, 4)) {
-      return showMessage('Too many OAuth attempts. Please wait and try again.', 'error');
-    }
-    btn.disabled = true;
-    const { error } = await window._sb.auth.signInWithOAuth({
-      provider: btn.dataset.provider,
-      options: { redirectTo: `${authUrl()}?redirect=${encodeURIComponent(redirectTarget)}` },
-    });
-    btn.disabled = false;
-    if (error) showMessage(error.message, 'error');
-  });
 });
 
 if (resetMode) {
