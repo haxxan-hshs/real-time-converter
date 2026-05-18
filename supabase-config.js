@@ -4,11 +4,11 @@
 
 const SUPABASE_URL =
   window.SUPABASE_URL ||
-  'https://mknkqrtxdosxqmaticbg.supabase.co';
+  'https://dnevnwmlddgwwvnvkwqb.supabase.co';
 
 const SUPABASE_ANON_KEY =
   window.SUPABASE_ANON_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbmtxcnR4ZG9zeHFtYXRpY2JnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwOTc5MDUsImV4cCI6MjA5NDY3MzkwNX0.iAKGfFFcuNyDfxyq2oi4GwDzFMMgJCwKUSEnNcaOSsU';
+  'sb_publishable_aAWVU5Dvy7HTvbAAxZI3uw_xVKbY2-w';
 
 if (!window.supabase) {
   throw new Error('Supabase CDN script must be loaded before supabase-config.js');
