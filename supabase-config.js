@@ -22,3 +22,11 @@ window._sb = window._sb || window.supabase.createClient(SUPABASE_URL, SUPABASE_A
     storage: window.localStorage,
   },
 });
+
+window.createProfile = async function createProfile(profile) {
+  return window._sb
+    .from('profiles')
+    .insert([profile])
+    .select()
+    .single();
+};
