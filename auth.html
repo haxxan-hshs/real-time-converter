@@ -1,1 +1,370 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sign in - Multi Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --primary: #e94560;
+    --primary2: #533483;
+    --text: #f0f0ff;
+    --text2: #b0b8d0;
+    --surface: rgba(15,15,40,0.78);
+    --border: rgba(255,255,255,0.15);
+    --input-bg: rgba(0,0,0,0.35);
+    --shadow: 0 8px 40px rgba(0,0,0,0.5);
+    --green: #00d4aa;
+    --danger: #ff6b6b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    font-family: 'Nunito', system-ui, sans-serif;
+    color: var(--text);
+    background:
+      linear-gradient(to bottom, rgba(5,5,20,0.58), rgba(5,5,20,0.78)),
+      url('images/Gemini_Generated_Image_dnl1wudnl1wudnl1.png') center/cover fixed;
+    display: grid;
+    place-items: center;
+    padding: 22px;
+  }
+  .auth-shell {
+    width: min(100%, 430px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(22px);
+    overflow: hidden;
+  }
+  .auth-head {
+    padding: 24px 24px 18px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,0,0,0.22);
+  }
+  .brand {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #fff;
+  }
+  .auth-head p {
+    margin-top: 8px;
+    color: var(--text2);
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+  .tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 16px 16px 0;
+  }
+  .tab-btn, .provider-btn, .primary-btn, .link-btn {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .tab-btn {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.08);
+    color: var(--text2);
+    padding: 10px;
+  }
+  .tab-btn.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+  form {
+    display: none;
+    padding: 18px 24px 24px;
+  }
+  form.active { display: block; }
+  .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+  label {
+    color: var(--text2);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--input-bg);
+    color: var(--text);
+    outline: none;
+    padding: 12px 14px;
+    font: 700 1rem 'Nunito', sans-serif;
+  }
+  input:focus { border-color: var(--primary); }
+  .primary-btn {
+    width: 100%;
+    border: 0;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary), var(--primary2));
+    color: #fff;
+    padding: 13px 16px;
+    font-size: 1rem;
+    margin-top: 4px;
+  }
+  .provider-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .provider-btn {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+    padding: 11px;
+  }
+  .auth-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+    color: var(--text2);
+    font-size: 0.88rem;
+  }
+  .link-btn {
+    border: 0;
+    background: transparent;
+    color: var(--primary);
+    padding: 0;
+  }
+  .message {
+    min-height: 24px;
+    margin: 0 24px 18px;
+    color: var(--text2);
+    font-size: 0.9rem;
+    line-height: 1.35;
+  }
+  .message.ok { color: var(--green); }
+  .message.error { color: var(--danger); }
+  button[disabled], input[disabled] { opacity: 0.7; cursor: wait; }
+  @media (max-width: 420px) {
+    body { padding: 14px; }
+    .provider-grid { grid-template-columns: 1fr; }
+    .auth-row { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+  <main class="auth-shell">
+    <section class="auth-head">
+      <div class="brand">Multi Calculator</div>
+      <p id="authSubtitle">Sign in to use your calculator workspace securely.</p>
+    </section>
+
+    <div class="tabs" id="authTabs">
+      <button class="tab-btn active" type="button" data-form="loginForm">Login</button>
+      <button class="tab-btn" type="button" data-form="registerForm">Register</button>
+    </div>
+
+    <form id="loginForm" class="active" novalidate>
+      <div class="field">
+        <label for="loginEmail">Email</label>
+        <input id="loginEmail" type="email" autocomplete="email" required/>
+      </div>
+      <div class="field">
+        <label for="loginPassword">Password</label>
+        <input id="loginPassword" type="password" autocomplete="current-password" minlength="8" required/>
+      </div>
+      <button class="primary-btn" type="submit">Login</button>
+      <div class="provider-grid">
+        <button class="provider-btn" type="button" data-provider="google">Google</button>
+        <button class="provider-btn" type="button" data-provider="github">GitHub</button>
+      </div>
+      <div class="auth-row">
+        <span>Forgot your password?</span>
+        <button class="link-btn" type="button" data-form-link="forgotForm">Reset it</button>
+      </div>
+    </form>
+
+    <form id="registerForm" novalidate>
+      <div class="field">
+        <label for="registerName">Name</label>
+        <input id="registerName" type="text" autocomplete="name" minlength="2" required/>
+      </div>
+      <div class="field">
+        <label for="registerEmail">Email</label>
+        <input id="registerEmail" type="email" autocomplete="email" required/>
+      </div>
+      <div class="field">
+        <label for="registerPassword">Password</label>
+        <input id="registerPassword" type="password" autocomplete="new-password" minlength="8" required/>
+      </div>
+      <button class="primary-btn" type="submit">Create Account</button>
+    </form>
+
+    <form id="forgotForm" novalidate>
+      <div class="field">
+        <label for="forgotEmail">Email</label>
+        <input id="forgotEmail" type="email" autocomplete="email" required/>
+      </div>
+      <button class="primary-btn" type="submit">Send Reset Link</button>
+      <div class="auth-row">
+        <span>Remembered it?</span>
+        <button class="link-btn" type="button" data-form-link="loginForm">Back to login</button>
+      </div>
+    </form>
+
+    <form id="resetForm" novalidate>
+      <div class="field">
+        <label for="resetPassword">New Password</label>
+        <input id="resetPassword" type="password" autocomplete="new-password" minlength="8" required/>
+      </div>
+      <button class="primary-btn" type="submit">Update Password</button>
+    </form>
+
+    <p class="message" id="authMessage" role="status" aria-live="polite"></p>
+  </main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="auth-guard.js"></script>
+<script>
+const forms = ['loginForm', 'registerForm', 'forgotForm', 'resetForm'];
+const tabs = document.querySelectorAll('.tab-btn');
+const message = document.getElementById('authMessage');
+const subtitle = document.getElementById('authSubtitle');
+const params = new URLSearchParams(window.location.search);
+const redirectTarget = params.get('redirect') || 'index.html';
+const resetMode = window.location.hash.includes('type=recovery') || params.get('type') === 'recovery';
+
+function showMessage(text, type = '') {
+  message.textContent = text;
+  message.className = `message ${type}`;
+}
+
+function showForm(id) {
+  forms.forEach(formId => document.getElementById(formId).classList.toggle('active', formId === id));
+  tabs.forEach(tab => tab.classList.toggle('active', tab.dataset.form === id));
+  document.getElementById('authTabs').style.display = id === 'forgotForm' || id === 'resetForm' ? 'none' : 'grid';
+  subtitle.textContent = id === 'resetForm'
+    ? 'Choose a new password for your account.'
+    : id === 'forgotForm'
+      ? 'Enter your email and we will send a reset link.'
+      : 'Sign in to use your calculator workspace securely.';
+  showMessage('');
+}
+
+function isRateLimited(key, limit = 6, windowMs = 60000) {
+  const now = Date.now();
+  const bucket = JSON.parse(localStorage.getItem(key) || '[]').filter(ts => now - ts < windowMs);
+  if (bucket.length >= limit) return true;
+  bucket.push(now);
+  localStorage.setItem(key, JSON.stringify(bucket));
+  return false;
+}
+
+function validEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function setLoading(form, loading) {
+  form.querySelectorAll('button, input').forEach(el => el.disabled = loading);
+}
+
+function authUrl() {
+  return `${window.location.origin}${window.location.pathname}`;
+}
+
+tabs.forEach(tab => tab.addEventListener('click', () => showForm(tab.dataset.form)));
+document.querySelectorAll('[data-form-link]').forEach(btn => {
+  btn.addEventListener('click', () => showForm(btn.dataset.formLink));
+});
+
+document.getElementById('loginForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  if (!validEmail(email) || password.length < 8) return showMessage('Enter a valid email and password.', 'error');
+  if (isRateLimited('auth-login-rate')) return showMessage('Too many attempts. Please wait a minute and try again.', 'error');
+  setLoading(form, true);
+  const { error } = await window._sb.auth.signInWithPassword({ email, password });
+  setLoading(form, false);
+  if (error) return showMessage(error.message, 'error');
+  window.location.replace(redirectTarget);
+});
+
+document.getElementById('registerForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const name = document.getElementById('registerName').value.trim();
+  const email = document.getElementById('registerEmail').value.trim();
+  const password = document.getElementById('registerPassword').value;
+  if (name.length < 2 || !validEmail(email) || password.length < 8) {
+    return showMessage('Use your name, a valid email, and a password with at least 8 characters.', 'error');
+  }
+  if (isRateLimited('auth-register-rate', 4)) return showMessage('Too many signup attempts. Please wait and try again.', 'error');
+  setLoading(form, true);
+  const { error } = await window._sb.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { full_name: name },
+      emailRedirectTo: authUrl(),
+    },
+  });
+  setLoading(form, false);
+  if (error) return showMessage(error.message, 'error');
+  showMessage('Account created. Check your email to verify your account before logging in.', 'ok');
+});
+
+document.getElementById('forgotForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const email = document.getElementById('forgotEmail').value.trim();
+  if (!validEmail(email)) return showMessage('Enter a valid email address.', 'error');
+  if (isRateLimited('auth-forgot-rate', 3)) return showMessage('Please wait before requesting another reset email.', 'error');
+  setLoading(form, true);
+  const { error } = await window._sb.auth.resetPasswordForEmail(email, { redirectTo: authUrl() });
+  setLoading(form, false);
+  if (error) return showMessage(error.message, 'error');
+  showMessage('Password reset link sent. Check your email.', 'ok');
+});
+
+document.getElementById('resetForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const password = document.getElementById('resetPassword').value;
+  if (password.length < 8) return showMessage('Password must be at least 8 characters.', 'error');
+  setLoading(form, true);
+  const { error } = await window._sb.auth.updateUser({ password });
+  setLoading(form, false);
+  if (error) return showMessage(error.message, 'error');
+  showMessage('Password updated. Redirecting...', 'ok');
+  setTimeout(() => window.location.replace(redirectTarget), 900);
+});
+
+document.querySelectorAll('[data-provider]').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    if (isRateLimited(`auth-${btn.dataset.provider}-rate`, 4)) {
+      return showMessage('Too many OAuth attempts. Please wait and try again.', 'error');
+    }
+    btn.disabled = true;
+    const { error } = await window._sb.auth.signInWithOAuth({
+      provider: btn.dataset.provider,
+      options: { redirectTo: `${authUrl()}?redirect=${encodeURIComponent(redirectTarget)}` },
+    });
+    btn.disabled = false;
+    if (error) showMessage(error.message, 'error');
+  });
+});
+
+if (resetMode) {
+  showForm('resetForm');
+} else if (params.get('verified') === 'true') {
+  showMessage('Email verified. You can log in now.', 'ok');
+}
+</script>
+</body>
+</html>

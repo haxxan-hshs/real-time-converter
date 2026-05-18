@@ -168,6 +168,10 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
+  body.auth-pending #app,
+  body.auth-pending #slide-controls {
+    visibility: hidden;
+  }
   #app {
     position: relative;
     z-index: 5;
@@ -214,6 +218,37 @@
     backdrop-filter: blur(8px);
   }
   .theme-btn:hover { background: var(--btn-hover); transform: scale(1.1); }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .auth-chip {
+    max-width: 150px;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--btn);
+    color: var(--text2);
+    font-size: 0.72rem;
+    font-weight: 800;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .auth-btn {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--primary);
+    color: #fff;
+    padding: 8px 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.76rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .auth-btn:hover { background: var(--btn-op-hover); }
 
   /* ===== TABS ===== */
   .tabs {
@@ -486,7 +521,7 @@
   }
 </style>
 </head>
-<body>
+<body class="auth-pending">
 
 <!-- ===== FULL-SCREEN BACKGROUND SLIDESHOW ===== -->
 <div id="bg-slideshow">
@@ -513,7 +548,11 @@
 <div id="app">
   <div class="header">
     <h1>⚡ Multi Calculator</h1>
-    <button class="theme-btn" id="themeToggle" title="Toggle Theme">🌙</button>
+    <div class="header-actions">
+      <span class="auth-chip" id="authUserLabel">Checking...</span>
+      <button class="auth-btn" id="logoutBtn" type="button" hidden>Logout</button>
+      <button class="theme-btn" id="themeToggle" title="Toggle Theme">🌙</button>
+    </div>
   </div>
 
   <div class="tabs" id="tabs">
@@ -717,6 +756,9 @@
 
 </div><!-- /app -->
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="auth-guard.js"></script>
 <script>
 // ========== STATE ==========
 let calcState = { current:'0', previous:'', operator:null, shouldReset:false, expr:'' };
